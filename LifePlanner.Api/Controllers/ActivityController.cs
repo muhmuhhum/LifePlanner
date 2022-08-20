@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LifePlanner.Api.Domain;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LifePlanner.Api.Controllers;
 
@@ -6,22 +7,86 @@ namespace LifePlanner.Api.Controllers;
 [Route("[controller]")]
 public class ActivityController : ControllerBase
 {
-    private ILogger<ActivityController> _logger;
+    private readonly ILogger<ActivityController> _logger;
+    private readonly IActivityManager _manager;
 
-    public ActivityController(ILogger<ActivityController> logger)
+
+    public ActivityController(ILogger<ActivityController> logger, IActivityManager manager)
     {
         _logger = logger;
-    }
-
-    [HttpGet]
-    public IActionResult Get()
-    {
-        return Ok();
+        _manager = manager;
     }
 
     [HttpPost]
-    public IActionResult Create()
+    public IActionResult Create(Activity activity)
     {
-        return Ok();
+        var result = _manager.CreateAsync(activity);
+
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        try
+        {
+            var result = await _manager.GetAll();
+            return Ok(result);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogControllerError(exception);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById([FromRoute] Guid id)
+    {
+        try
+        {
+            var result = await _manager.GetById(id);
+            if (result is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogControllerError(exception);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update(Activity activity)
+    {
+        try
+        {
+            var result = await _manager.Update(activity);
+            return Ok(result);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogControllerError(exception);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        try
+        {
+            var result = await _manager.Delete(id);
+            return Ok(result);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogControllerError(exception);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }
