@@ -5,14 +5,23 @@ public class Activity
     public Guid Id { get; set; }
     public string Name { get; set; }
     public ExecutionInterval Interval { get; set; }
-    public TimeSpan? CustomInterval { get; set; }
+    public int? CustomInterval { get; set; }
     public NotificationTime NotificationTime { get; set; }
     public TimeOnly? CustomNotificationTime { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime? LastExecution { get; set; }
     public bool IsActive { get; set; }
 
-    public Activity(Guid id, string name, ExecutionInterval interval, TimeSpan? customInterval, NotificationTime notificationTime, TimeOnly? customNotificationTime, DateTime startDate, DateTime? lastExecution, bool isActive)
+    public Activity(
+        Guid id, 
+        string name, 
+        ExecutionInterval interval, 
+        int? customInterval, 
+        NotificationTime notificationTime, 
+        TimeOnly? customNotificationTime, 
+        DateTime startDate, 
+        DateTime? lastExecution, 
+        bool isActive)
     {
         Id = id;
         Name = name;
