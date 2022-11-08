@@ -16,6 +16,7 @@ builder.Services.AddSwaggerGen(opt =>
 builder.Services.AddNpgsql<DatabaseContext>(builder.Configuration["Db:LifePlanner"]);
 builder.Services.AddScoped<IActivityManager, ActivityManager>();
 builder.Services.AddHostedService<TelegramBackgroundService>();
+builder.Services.AddHostedService<ActivityHandler>();
 
 var app = builder.Build();
 
