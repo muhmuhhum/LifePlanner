@@ -17,6 +17,12 @@ public class ActivityStore : IActivityStore
         return Context.Activities.ToListAsync();
     }
 
+    public Task<List<Activity>> GetWithoutExecutedToday()
+    {
+        return Context.Activities.Where(x => x.LastExecution == null ||
+                                             x.LastExecution.Value.Date != DateTime.UtcNow).ToListAsync();
+    }
+
     public Task<Activity?> GetById(Guid id)
     {
         return Context.Activities.FirstOrDefaultAsync(x => x.Id == id);

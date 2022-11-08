@@ -18,6 +18,7 @@ builder.Services.AddNpgsql<DatabaseContext>(builder.Configuration["Db:LifePlanne
 builder.Services.AddSingleton<ITelegramService, TelegramService>();
 builder.Services.AddScoped<IActivityStore, ActivityStore>();
 builder.Services.AddScoped<IUserStore, UserStore>();
+builder.Services.AddHostedService<ActivityHandler>();
 
 var app = builder.Build();
 
