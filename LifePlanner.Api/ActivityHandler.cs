@@ -1,4 +1,5 @@
 ﻿using LifePlanner.Api.Domain;
+using LifePlanner.Api.Store;
 
 namespace LifePlanner.Api;
 
@@ -18,7 +19,7 @@ public class ActivityHandler : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             using var scope = _provider.CreateScope();
-            var manager = scope.ServiceProvider.GetService<IActivityManager>();
+            var manager = scope.ServiceProvider.GetService<IActivityStore>();
 
             if (manager is null)
             {

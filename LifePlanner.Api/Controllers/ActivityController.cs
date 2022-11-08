@@ -1,4 +1,5 @@
 ﻿using LifePlanner.Api.Domain;
+using LifePlanner.Api.Store;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LifePlanner.Api.Controllers;
@@ -8,10 +9,10 @@ namespace LifePlanner.Api.Controllers;
 public class ActivityController : ControllerBase
 {
     private readonly ILogger<ActivityController> _logger;
-    private readonly IActivityManager _manager;
+    private readonly IActivityStore _manager;
 
 
-    public ActivityController(ILogger<ActivityController> logger, IActivityManager manager)
+    public ActivityController(ILogger<ActivityController> logger, IActivityStore manager)
     {
         _logger = logger;
         _manager = manager;
