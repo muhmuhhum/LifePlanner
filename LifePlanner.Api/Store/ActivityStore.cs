@@ -1,14 +1,13 @@
 ﻿using LifePlanner.Api.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace LifePlanner.Api;
+namespace LifePlanner.Api.Store;
 
-public class ActivityManager : IActivityManager
+public class ActivityStore : IActivityStore
 {
     private DatabaseContext Context { get; set; }
     
-    
-    public ActivityManager(DatabaseContext context)
+    public ActivityStore(DatabaseContext context)
     {
         Context = context;
     }

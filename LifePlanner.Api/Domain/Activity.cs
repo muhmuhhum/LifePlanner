@@ -12,6 +12,8 @@ public class Activity
     public DateTime? LastExecution { get; set; }
     public bool IsActive { get; set; }
 
+    public List<User> Users { get; set; }
+
     public Activity(Guid id, string name, ExecutionInterval interval, TimeSpan? customInterval, NotificationTime notificationTime, TimeOnly? customNotificationTime, DateTime startDate, DateTime? lastExecution, bool isActive)
     {
         Id = id;

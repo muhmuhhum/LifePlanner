@@ -1,8 +1,8 @@
 ﻿using LifePlanner.Api.Domain;
 
-namespace LifePlanner.Api;
+namespace LifePlanner.Api.Store;
 
-public interface IActivityManager
+public interface IActivityStore
 {
     public Task<List<Activity>> GetAll();
     public Task<Activity?> GetById(Guid id);

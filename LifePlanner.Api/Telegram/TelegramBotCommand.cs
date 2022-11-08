@@ -1,6 +1,5 @@
-﻿using LifePlanner.Api.Telegram.Commands;
-using Telegram.Bot;
-using Telegram.Bot.Types;
+﻿using LifePlanner.Api.Store;
+using LifePlanner.Api.Telegram.Commands;
 
 namespace LifePlanner.Api.Telegram;
 
@@ -11,6 +10,6 @@ public class TelegramBotCommand
 
     public Create CreateNewState { get; set; }
 
-    public delegate ICommandState Create(long chatId, TelegramBotClient client, IActivityManager manager);
+    public delegate ICommandHandler Create(long chatId, IActivityStore manager, IUserStore userStore, ITelegramService telegramService);
 
 }

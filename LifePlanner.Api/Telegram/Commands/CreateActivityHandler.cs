@@ -1,25 +1,26 @@
 ﻿using System.Text.Json;
 using LifePlanner.Api.Domain;
+using LifePlanner.Api.Store;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace LifePlanner.Api.Telegram.Commands;
 
-public class CreateState : ICommandState
+public class CreateActivityHandler : ICommandHandler
 {
-    public long ChatId { get; set; }
+    public long ChatId { get; }
     public CreateStateEnum? State { get; set; }
     private Activity _activity;
-    private readonly IActivityManager _activityManager;
-    
+    private readonly IActivityStore _activityStore;
+    private readonly ITelegramService _telegramService;
+    private readonly IUserStore _userStore;
 
-    private readonly TelegramBotClient _client;
-    
-    public CreateState(long chatId, TelegramBotClient client, IActivityManager activityManager)
+    public CreateActivityHandler(long chatId, IActivityStore activityStore, IUserStore userStore, ITelegramService telegramService)
     {
         ChatId = chatId;
-        _client = client;
-        _activityManager = activityManager;
+        _activityStore = activityStore;
+        _userStore = userStore;
+        _telegramService = telegramService;
     }
 
     public async Task<bool> Execute(string message)
@@ -27,7 +28,7 @@ public class CreateState : ICommandState
         switch (State)
         {
             case null:
-                await TelegramInteractions.SendMessage(ChatId, "Wie soll die Aktivität heißen", _client);
+                await _telegramService.SendMessage(ChatId, "Wie soll die Aktivität heißen");
                 State = CreateStateEnum.SetName;
                 break;
             case CreateStateEnum.SetName:
@@ -35,39 +36,39 @@ public class CreateState : ICommandState
                 {
                     Name = message
                 };
-                await TelegramInteractions.SendMessage(ChatId, "Interval eingeben", _client);
+                await _telegramService.SendMessage(ChatId, "Interval eingeben");
                 State = CreateStateEnum.SetInterval;
                 break;
             case CreateStateEnum.SetInterval:
                 ExecutionInterval output;
                 if (!ExecutionInterval.TryParse(message, true,  out output))
                 {
-                    await TelegramInteractions.SendMessage(ChatId, "Ungültiges interval", _client);
+                    await _telegramService.SendMessage(ChatId, "Ungültiges interval");
                     return false;
                 }
 
                 _activity.Interval = output;
-                await TelegramInteractions.SendMessage(ChatId, "Startdatum eingeben", _client);
+                await _telegramService.SendMessage(ChatId, "Startdatum eingeben");
                 State = CreateStateEnum.SetStartingDate;
                 break;
             case CreateStateEnum.SetStartingDate:
                 DateTime startDateOutput;
                 if (!DateTime.TryParse(message, out startDateOutput))
                 {
-                    await TelegramInteractions.SendMessage(ChatId, "Ungültiges interval", _client);
+                    await _telegramService.SendMessage(ChatId, "Ungültiges interval");
                     return false;
                 }
 
                 if (startDateOutput < DateTime.Now)
                 {
-                    await TelegramInteractions.SendMessage(ChatId, "Datum nach heute eingeben", _client);
+                    await _telegramService.SendMessage(ChatId, "Datum nach heute eingeben");
                     return false;
                 }
 
                 var universalTime = startDateOutput.ToUniversalTime();
                 _activity.StartDate = universalTime;
-                await TelegramInteractions.SendMessage(ChatId, JsonSerializer.Serialize(_activity), _client);
-                await _activityManager.CreateAsync(_activity);
+                await _telegramService.SendMessage(ChatId, JsonSerializer.Serialize(_activity));
+                await _activityStore.CreateAsync(_activity);
                 return true;
             default:
                 throw new ArgumentOutOfRangeException();

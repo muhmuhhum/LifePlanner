@@ -1,6 +1,6 @@
 ﻿namespace LifePlanner.Api.Telegram.Commands;
 
-public interface ICommandState
+public interface ICommandHandler
 {
     public Task<bool> Execute(string message);
 }
